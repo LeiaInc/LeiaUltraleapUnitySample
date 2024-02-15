@@ -1,0 +1,17 @@
+Leia Remote
+
+	Description:
+  	Enables previewing content on Leia devices.
+
+	Quick start:
+ 1) Install LeiaRemote2.apk
+ 2) Set Unity Editor Game Window resolution to device resolution.
+    The Lumepad resolution is 2560x1600 for landscape or 1600x2560 for portrait.
+    Select Lume_Pad in LeiaDisplay gameobject dropdown 'Editor Emiulated Views' with checkbox 'Set game view reolution when Editor Emulatd Views changes' enabled
+ 3) Set the following settings in Edit -> Project Settings -> Editor
+    Device: Any Android Device
+    Compression: PNG
+    Resolution: Normal
+ 4) Add LeiaRemote prefab to a scene scene.
+ 5) Press play and Leia Remote 2 will open automatically.
+ 

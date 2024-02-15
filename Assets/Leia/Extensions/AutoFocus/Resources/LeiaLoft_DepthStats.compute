@@ -1,0 +1,71 @@
+/*!
+* Copyright (C) 2023  Leia, Inc.
+*
+* This software has been provided under the Leia license agreement.
+* You can find the agreement at https://www.leiainc.com/legal/license-agreement
+*
+* This source code is considered Creator Materials under the definitions of the Leia license agreement.
+*/
+
+#pragma kernel DepthStats
+
+#define THREAD_X 64
+#define THREAD_Y 16
+#define THREAD_Z 1
+#define THREAD_COUNT (THREAD_X * THREAD_Y * THREAD_Z)
+#define THREAD_COUNT_LOG2 (log2(THREAD_COUNT))
+
+Texture2D<float4> DepthTexture;
+RWStructuredBuffer<float> resultFloats;
+groupshared float2 depth_min[THREAD_COUNT];
+groupshared float depth_sum[THREAD_COUNT];
+groupshared float depth_avg[THREAD_COUNT];
+
+[numthreads(THREAD_X,THREAD_Y,THREAD_Z)]
+void DepthStats(uint groupindex : SV_GroupIndex, uint3 groupid : SV_DispatchThreadID)
+{
+	// (a * THREAD_X) x (b * THREAD_Y) to (THREAD_X) x (THREAD_Y)
+
+	uint w, h;
+	
+	DepthTexture.GetDimensions(w, h);
+	uint a = uint(w / THREAD_X);
+	uint b = uint(h / THREAD_Y);
+
+	uint elements = 0;
+
+	depth_min[groupindex] = float2(1.0, 1.0);
+	depth_avg[groupindex] = DepthTexture[uint2(0, 0)].r;
+
+	for (uint y = b * groupid.y; y < b * (groupid.y + 1); y++) {
+		for (uint x = a * groupid.x; x < a * (groupid.x + 1); x++) {
+			depth_min[groupindex] = min(DepthTexture[uint2(x,y)].rg, depth_min[groupindex]);
+			
+			depth_avg[groupindex] = (DepthTexture[uint2(x, y)].r + DepthTexture[uint2(x, y)].r) / 2;
+		}
+	}
+
+	GroupMemoryBarrier();
+
+	for (uint round = 0; round < uint(THREAD_COUNT_LOG2 - 1); round++) {
+		uint offset = 1 << round;
+		uint increment = offset << 1;
+		if (groupindex % increment == 0) {
+			depth_min[groupindex] = min(depth_min[groupindex], depth_min[groupindex + offset]);
+			depth_avg[groupindex] = (depth_avg[groupindex] + depth_avg[groupindex + offset])/2;
+		}
+
+		GroupMemoryBarrier();
+	}
+
+	if (groupindex == 0)
+	{	
+		uint averageDepth = depth_avg[0];
+
+		resultFloats[0] = depth_min[0].x;
+		resultFloats[1] = 1.0 - depth_min[0].y;
+		resultFloats[2] = depth_avg[0];
+	
+		depth_min[0] = min(depth_min[0], depth_min[512]);
+	}
+}
