@@ -1,0 +1,36 @@
+{
+  "SupportedDevices": [
+    {
+      "Name": "Leap Motion Controller",
+      "HorizontalFOV": 140,
+      "VerticalFOV": 120,
+      "MinDistance": 10,
+      "OptimalDistance": 60,
+      "MaxDistance": 80
+    },
+    {
+      "Name": "Stereo IR 170",
+      "HorizontalFOV": 160,
+      "VerticalFOV": 160,
+      "MinDistance": 10,
+      "OptimalDistance": 75,
+      "MaxDistance": 100
+    },
+    {
+      "Name": "3Di",
+      "HorizontalFOV": 145,
+      "VerticalFOV": 145,
+      "MinDistance": 10,
+      "OptimalDistance": 75,
+      "MaxDistance": 100
+    },
+    {
+      "Name": "Leap Motion Controller 2",
+      "HorizontalFOV": 165,
+      "VerticalFOV": 165,
+      "MinDistance": 10,
+      "OptimalDistance": 75,
+      "MaxDistance": 100
+    }
+  ]
+}
