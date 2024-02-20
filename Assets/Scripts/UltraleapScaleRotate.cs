@@ -1,82 +1,100 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Leap.Unity;
-using LeiaUnity;
 
-
+/// <summary>
+/// Controls scaling and rotating of a target object using pinch gestures with the Ultraleap hand tracking.
+/// </summary>
 public class UltraleapScaleRotate : MonoBehaviour
 {
-    public Vector2 MinMaxScale = new Vector2(1f, 2f);
-    public float MinPinchStrength = .6f;
-    public float ScaleRate = 0.05f;
-    public float RotSensitivity = 2.0f;
-    private float lastDistance = -1;
-    public float minDifference = .01f;
-    public float MaxDistance = 10f;
-    public GameObject targetObject;
-    private bool _isPinching = false;
-    private Quaternion _lastRotation;
+    [SerializeField] private GameObject targetObject;
 
+    [SerializeField] private Vector2 minMaxScale = new Vector2(1f, 2f);
+    [SerializeField] private float minPinchStrength = 0.6f;
+    [SerializeField] private float scaleRate = 0.05f;
+    [SerializeField] private float rotSensitivity = 2.0f;
+    [SerializeField] private float maxDistance = 10f;
+
+    private float lastDistance = -1;
+    private bool isPinching = false;
+    private Quaternion lastRotation;
 
     private void Update()
     {
-        PinchScale();
-        PinchRotate();
-
+        HandlePinchScale();
+        HandlePinchRotate();
     }
 
-    private void PinchRotate()
+    /// <summary>
+    /// Handles the rotation of the object based on pinch gesture.
+    /// </summary>
+    private void HandlePinchRotate()
     {
-        if ((Hands.Left != null && Hands.Left.PinchStrength > MinPinchStrength) &&
-        (Hands.Right != null && Hands.Right.PinchStrength > MinPinchStrength))
+        if (IsPinching())
         {
-            var newRotation = Quaternion.LookRotation(Hands.Left.PalmPosition - Hands.Right.PalmPosition);
-            var sensitiveNewRot = Quaternion.Euler(newRotation.eulerAngles.x * RotSensitivity,
-                                                   newRotation.eulerAngles.y * RotSensitivity,
-                                                   newRotation.eulerAngles.z * RotSensitivity);
-            if (!_isPinching)
+            Quaternion newRotation = CalculatePinchRotation();
+            if (!isPinching)
             {
-                _lastRotation = sensitiveNewRot;
-                _isPinching = true;
+                lastRotation = newRotation;
+                isPinching = true;
             }
             else
             {
-                var difference = _lastRotation * Quaternion.Inverse(sensitiveNewRot);
-                transform.Rotate(-difference.eulerAngles.z, 0f, 0f, Space.World);
-                transform.Rotate(0f, -difference.eulerAngles.y, 0f, Space.World);
-                transform.Rotate(0f, 0f, difference.eulerAngles.x, Space.World);
-                _lastRotation = sensitiveNewRot;
-
+                ApplyRotation(newRotation);
             }
         }
         else
         {
-            _isPinching = false;
+            isPinching = false;
         }
     }
 
-
-    private void PinchScale()
+    /// <summary>
+    /// Checks if both hands are pinching above the minimum pinch strength.
+    /// </summary>
+    /// <returns>True if both hands are pinching; otherwise, false.</returns>
+    private bool IsPinching()
     {
-        if ((Hands.Left != null && Hands.Left.PinchStrength > MinPinchStrength) &&
-            (Hands.Right != null && Hands.Right.PinchStrength > MinPinchStrength))
+        return Hands.Left != null && Hands.Left.PinchStrength > minPinchStrength &&
+               Hands.Right != null && Hands.Right.PinchStrength > minPinchStrength;
+    }
+
+    /// <summary>
+    /// Calculates the new rotation based on the pinch gesture.
+    /// </summary>
+    /// <returns>The new rotation as a Quaternion.</returns>
+    private Quaternion CalculatePinchRotation()
+    {
+        var newRotation = Quaternion.LookRotation(Hands.Left.PalmPosition - Hands.Right.PalmPosition);
+        return Quaternion.Euler(newRotation.eulerAngles.x * rotSensitivity,
+                                newRotation.eulerAngles.y * rotSensitivity,
+                                newRotation.eulerAngles.z * rotSensitivity);
+    }
+
+    /// <summary>
+    /// Applies rotation to the target object based on the difference from the last rotation.
+    /// </summary>
+    /// <param name="newRotation">The new rotation as a Quaternion.</param>
+    private void ApplyRotation(Quaternion newRotation)
+    {
+        var difference = lastRotation * Quaternion.Inverse(newRotation);
+        transform.Rotate(-difference.eulerAngles.z, 0f, 0f, Space.World);
+        transform.Rotate(0f, -difference.eulerAngles.y, 0f, Space.World);
+        transform.Rotate(0f, 0f, difference.eulerAngles.x, Space.World);
+        lastRotation = newRotation;
+    }
+
+    /// <summary>
+    /// Handles the scaling of the object based on pinch distance.
+    /// </summary>
+    private void HandlePinchScale()
+    {
+        if (IsPinching())
         {
-            Vector3 leftPos = Hands.Left.GetIndex().TipPosition;
-            Vector3 rightPos = Hands.Right.GetIndex().TipPosition;
-            float distance = Vector3.Distance(leftPos, rightPos);
-
-            if (distance > MaxDistance)
-                return;
-            if (lastDistance != -1)
+            float distance = CalculatePinchDistance();
+            if (distance <= maxDistance)
             {
-                var distanceDiff = lastDistance - distance;
-                float scale = targetObject.transform.localScale.x - distanceDiff * 1.25f;
-                scale = Mathf.Clamp(scale, MinMaxScale.x, MinMaxScale.y);
-                targetObject.transform.localScale = new Vector3(scale, scale, scale);
+                ApplyScale(distance);
             }
-
-            lastDistance = distance;
         }
         else
         {
@@ -84,4 +102,30 @@ public class UltraleapScaleRotate : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Calculates the distance between the index tips of both pinching hands.
+    /// </summary>
+    /// <returns>The distance as a float.</returns>
+    private float CalculatePinchDistance()
+    {
+        Vector3 leftPos = Hands.Left.GetIndex().TipPosition;
+        Vector3 rightPos = Hands.Right.GetIndex().TipPosition;
+        return Vector3.Distance(leftPos, rightPos);
+    }
+
+    /// <summary>
+    /// Applies scaling to the target object based on the change in pinch distance.
+    /// </summary>
+    /// <param name="currentDistance">The current pinch distance.</param>
+    private void ApplyScale(float currentDistance)
+    {
+        if (lastDistance != -1)
+        {
+            float distanceDiff = lastDistance - currentDistance;
+            float scale = targetObject.transform.localScale.x - distanceDiff * scaleRate;
+            scale = Mathf.Clamp(scale, minMaxScale.x, minMaxScale.y);
+            targetObject.transform.localScale = new Vector3(scale, scale, scale);
+        }
+        lastDistance = currentDistance;
+    }
 }

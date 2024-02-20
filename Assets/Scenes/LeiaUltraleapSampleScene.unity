@@ -2670,21 +2670,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6cdad662b7ac6ed4fa8e2568c5dc5ac4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  MinMaxScale: {x: 1, y: 2}
-  MinPinchStrength: 0.6
-  ScaleRate: 0.05
-  RotSensitivity: 2
-  minDifference: 0.01
-  MaxDistance: 10
   targetObject: {fileID: 6486642079121122915}
+  minMaxScale: {x: 0.5, y: 5}
+  minPinchStrength: 0.6
+  scaleRate: 0.25
+  rotSensitivity: 2
+  maxDistance: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
   m_Roots:
+  - {fileID: 2090015890}
   - {fileID: 2048584333}
   - {fileID: 1704188767}
   - {fileID: 240625926}
-  - {fileID: 2090015890}
   - {fileID: 261271052}
   - {fileID: 2027233963}
   - {fileID: 1903748036}
