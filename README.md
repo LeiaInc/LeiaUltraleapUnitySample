@@ -5,6 +5,11 @@ This project showcases a simple model viewer leveraging both Leia's and Ultralea
 
 Users can scale and rotate a target object using pinch gestures with Ultraleap's hand tracking technology on Leia's Spatial Reality Display (SRDisplay). This integration creates an immersive user experience by enabling intuitive 3D interaction.
 
+
+![image](https://github.com/LeiaInc/LeiaUltraleapUnitySample/assets/51935243/4a3abbdf-6845-461c-bf36-46cd65ce3487)
+
+
+
 ## Prerequisites
 
 SR Platfrom v1.28, downloadable here:
