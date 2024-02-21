@@ -1,9 +1,17 @@
 # LeiaUltraleapUnitySample
 
 ## Overview
-The LeiaUltraleapUnitySample project showcases a model viewer leveraging the Leia Unity SDK and Ultraleap's Unity Plugin to demonstrate interactive controls. Users can scale and rotate a target object using pinch gestures, facilitated by Ultraleap's hand tracking technology on Leia's Spatial Reality Display (SRDisplay). This integration creates an immersive user experience by enabling intuitive 3D interaction.
+This project showcases a simple model viewer leveraging both Leia's and Ultraleaps's Unity Plugin to demonstrate interactive controls. 
+
+Users can scale and rotate a target object using pinch gestures with Ultraleap's hand tracking technology on Leia's Spatial Reality Display (SRDisplay). This integration creates an immersive user experience by enabling intuitive 3D interaction.
 
 ## Prerequisites
+
+SR Platfrom v1.28, downloadable here:
+
+https://www.srappstore.com/
+
+
 This project is developed with specific versions of the Leia Unity SDK and Ultraleap Unity Plugin to ensure compatibility and functionality. Ensure you have the following setup:
 
 - [LeiaUnitySDK v3.2.3](https://www.leiainc.com/developer-resources) - Download and import this SDK into your Unity project.
@@ -25,7 +33,7 @@ There is no need to import the LeiaUnitySDK or Ultraleap.UnityPlugin packages as
 
 Follow these steps to explore and interact with the sample scene:
 
-1. **Open the Scene**: In Unity, navigate to the `Scenes` folder found in the Project window. Locate `LeiaUltraleapSampleScene` and double-click it to open.
+1. **Open the Scene**: In Unity, navigate to the `Scenes/LeiaUltraleapSampleScene` and double-click it to open.
 
 2. **Launch the Scene**: Press the Play button in Unity. This action starts the scene, allowing you to interact with the model using hand gestures.
 
