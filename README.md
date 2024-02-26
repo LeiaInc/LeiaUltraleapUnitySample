@@ -9,6 +9,16 @@ Users can scale and rotate a target object using pinch gestures with Ultraleap's
 ![image](https://github.com/LeiaInc/LeiaUltraleapUnitySample/assets/51935243/4a3abbdf-6845-461c-bf36-46cd65ce3487)
 
 
+### Using Existing Sample Scene
+
+This project uses the Model Viewer Sample Scene found in our plugin at 
+
+ **Assets/Leia/Examples/ModelViewer**
+ 
+ For those looking for simple Windows and Android integration without Ultraleap, we suggest starting there.
+Documentation can be found here:
+
+https://support.leiainc.com/developer-docs/unity-sdk/leia-unity-plugin-guide/extensions/model-viewer-sample-scene
 
 ## Prerequisites
 
